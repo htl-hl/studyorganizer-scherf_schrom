@@ -13,18 +13,19 @@ use app\models\ContactForm;
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
     public function behaviors()
     {
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['index', 'error', 'about', 'contact', 'captcha'],
+                        'allow' => true,
+                        'roles' => ['?', '@'],
+                    ],
+                    [
+                        'actions' => ['home', 'logout'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -39,9 +40,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function actions()
     {
         return [
@@ -56,27 +54,27 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return string
+     * Login-Seite (= Startseite für nicht eingeloggte User)
      */
     public function actionIndex()
     {
+        // Wenn bereits eingeloggt → direkt zur Home-Seite
         if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->redirect(['site/home']);
         }
 
         $loginModel = new LoginForm();
         if ($loginModel->load(Yii::$app->request->post()) && $loginModel->login()) {
-            return $this->goBack();
+            // Nach erfolgreichem Login → Home-Seite
+            return $this->redirect(['site/home']);
         }
 
         $loginModel->password = '';
 
         $registrationModel = new RegistrationForm();
         if ($registrationModel->load(Yii::$app->request->post()) && $registrationModel->register()) {
-            Yii::$app->session->setFlash('success', 'Thank you for registration. Please login.');
-            return $this->goHome();
+            Yii::$app->session->setFlash('success', 'Registrierung erfolgreich! Bitte melde dich an.');
+            return $this->redirect(['site/index']);
         }
 
         return $this->render('index', [
@@ -86,50 +84,31 @@ class SiteController extends Controller
     }
 
     /**
-     * Login action.
-     *
-     * @return Response|string
+     * Home-Seite (nur für eingeloggte User)
+     * Nicht eingeloggte User werden automatisch zur Login-Seite weitergeleitet
      */
-    public function actionLogin()
+    public function actionHome()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $this->render('home');
     }
 
     /**
-     * Logout action.
-     *
-     * @return Response
+     * Logout
      */
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
-        return $this->goHome();
+        return $this->redirect(['site/index']);
     }
 
     /**
-     * Displays contact page.
-     *
-     * @return Response|string
+     * Kontakt-Seite
      */
     public function actionContact()
     {
         $model = new ContactForm();
         if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
             Yii::$app->session->setFlash('contactFormSubmitted');
-
             return $this->refresh();
         }
         return $this->render('contact', [
@@ -138,9 +117,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays about page.
-     *
-     * @return string
+     * About-Seite
      */
     public function actionAbout()
     {

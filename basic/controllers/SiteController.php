@@ -53,19 +53,22 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Login-Seite (= Startseite für nicht eingeloggte User)
-     */
     public function actionIndex()
     {
-        // Wenn bereits eingeloggt → direkt zur Home-Seite
+        // Bereits eingeloggt → je nach User weiterleiten
         if (!Yii::$app->user->isGuest) {
+            if (Yii::$app->user->identity->username === 'admin') {
+                return $this->redirect(['/admin/index']);
+            }
             return $this->redirect(['site/home']);
         }
 
         $loginModel = new LoginForm();
         if ($loginModel->load(Yii::$app->request->post()) && $loginModel->login()) {
-            // Nach erfolgreichem Login → Home-Seite
+            // Nach Login: admin → Admin-Seite, alle anderen → Home
+            if (Yii::$app->user->identity->username === 'admin') {
+                return $this->redirect(['/admin/index']);
+            }
             return $this->redirect(['site/home']);
         }
 
@@ -83,27 +86,17 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Home-Seite (nur für eingeloggte User)
-     * Nicht eingeloggte User werden automatisch zur Login-Seite weitergeleitet
-     */
     public function actionHome()
     {
         return $this->render('home');
     }
 
-    /**
-     * Logout
-     */
     public function actionLogout()
     {
         Yii::$app->user->logout();
         return $this->redirect(['site/index']);
     }
 
-    /**
-     * Kontakt-Seite
-     */
     public function actionContact()
     {
         $model = new ContactForm();
@@ -116,9 +109,6 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * About-Seite
-     */
     public function actionAbout()
     {
         return $this->render('about');

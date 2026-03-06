@@ -5,9 +5,6 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 
-/**
- * RegistrationForm is the model behind the registration form.
- */
 class RegistrationForm extends Model
 {
     public $username;
@@ -15,9 +12,6 @@ class RegistrationForm extends Model
     public $password_repeat;
     public $role;
 
-    /**
-     * @return array the validation rules.
-     */
     public function rules()
     {
         return [
@@ -29,10 +23,6 @@ class RegistrationForm extends Model
         ];
     }
 
-    /**
-     * Registers a new user.
-     * @return bool whether the user is registered successfully
-     */
     public function register()
     {
         if ($this->validate()) {

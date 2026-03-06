@@ -70,8 +70,6 @@ class AdminController extends Controller
         ]);
     }
 
-    // ── FACH ──────────────────────────────────────────────────────────────────
-
     public function actionCreateFach()
     {
         $name = trim(Yii::$app->request->post('name', ''));
@@ -115,12 +113,11 @@ class AdminController extends Controller
         $id = (int)Yii::$app->request->post('id');
         $subject = Subject::findOne($id);
         if ($subject) {
+            Teacher::deleteAll(['subject_id' => $id]);
             $subject->delete();
         }
         return $this->redirect(['/admin/index']);
     }
-
-    // ── LEHRER ────────────────────────────────────────────────────────────────
 
     public function actionCreateLehrer()
     {

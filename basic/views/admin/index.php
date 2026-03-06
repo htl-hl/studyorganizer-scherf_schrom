@@ -11,27 +11,35 @@
 /** @var bool $showFachForm */
 /** @var bool $showLehrerForm */
 /** @var string|null $error */
+/** @var string|null $success */
 
 use yii\bootstrap5\Html;
 
 $this->title = 'Admin';
 $csrf = Yii::$app->request->csrfToken;
 
-$base           = 'index.php?r=';
-$urlIndex       = $base . 'admin%2Findex';
-$urlCreateFach  = $base . 'admin%2Fcreate-fach';
-$urlUpdateFach  = $base . 'admin%2Fupdate-fach';
-$urlDeleteFach  = $base . 'admin%2Fdelete-fach';
+$base            = 'index.php?r=';
+$urlIndex        = $base . 'admin%2Findex';
+$urlCreateFach   = $base . 'admin%2Fcreate-fach';
+$urlUpdateFach   = $base . 'admin%2Fupdate-fach';
+$urlDeleteFach   = $base . 'admin%2Fdelete-fach';
 $urlCreateLehrer = $base . 'admin%2Fcreate-lehrer';
 $urlUpdateLehrer = $base . 'admin%2Fupdate-lehrer';
 $urlToggleLehrer = $base . 'admin%2Ftoggle-lehrer';
-$urlLogout      = $base . 'site%2Flogout';
+$urlLogout       = $base . 'site%2Flogout';
+
+// editFachId / editLehrerId can come from flash (after error) or from GET (user clicked edit)
+$editFachId   = $editFachId   ?? Yii::$app->request->get('editFachId');
+$editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
 ?>
 
 <div class="admin-page">
 
-    <?php if ($error): ?>
+    <?php if (!empty($error)): ?>
         <div class="alert alert-danger mb-3"><?= Html::encode($error) ?></div>
+    <?php endif; ?>
+    <?php if (!empty($success ?? null)): ?>
+        <div class="alert alert-success mb-3"><?= Html::encode($success) ?></div>
     <?php endif; ?>
 
     <!-- ═══════════════════ FÄCHER CARD ═══════════════════ -->
@@ -88,6 +96,7 @@ $urlLogout      = $base . 'site%2Flogout';
                     <?php foreach ($faecher as $fach): ?>
                         <tr>
                             <?php if ((int)$editFachId === (int)$fach['id']): ?>
+                                <!-- Inline Edit -->
                                 <td colspan="2">
                                     <form method="post" action="<?= $urlUpdateFach ?>"
                                           class="d-flex gap-2 align-items-center">
@@ -106,10 +115,10 @@ $urlLogout      = $base . 'site%2Flogout';
                                     <a href="<?= $urlIndex ?>&editFachId=<?= $fach['id'] ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
                                        class="btn-icon btn-edit" title="Bearbeiten">✏️</a>
                                     <form method="post" action="<?= $urlDeleteFach ?>" style="display:inline"
-                                          onsubmit="return confirm('Fach wirklich löschen?')">
-                                        <input type="hidden" name="_csrf" value="<?= $csrf ?>">
-                                        <input type="hidden" name="id" value="<?= $fach['id'] ?>">
-                                        <button type="submit" class="btn-icon btn-delete" title="Löschen">🗑️</button>
+                                          onsubmit="return confirm('Fach „<?= Html::encode(addslashes($fach['name'])) ?>" wirklich löschen?')">
+                                    <input type="hidden" name="_csrf" value="<?= $csrf ?>">
+                                    <input type="hidden" name="id" value="<?= $fach['id'] ?>">
+                                    <button type="submit" class="btn-icon btn-delete" title="Löschen">🗑️</button>
                                     </form>
                                 </td>
                             <?php endif; ?>
@@ -190,6 +199,7 @@ $urlLogout      = $base . 'site%2Flogout';
                     <?php foreach ($lehrer as $l): ?>
                         <tr>
                             <?php if ((int)$editLehrerId === (int)$l['id']): ?>
+                                <!-- Inline Edit -->
                                 <td colspan="4">
                                     <form method="post" action="<?= $urlUpdateLehrer ?>"
                                           class="d-flex gap-2 align-items-center flex-wrap">

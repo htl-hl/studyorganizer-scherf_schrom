@@ -17,6 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p><h3>Work in Progress</h3></p>
+
     <p>
         <?= Html::a(Yii::t('app', 'Create Homework'), ['create'], ['class' => 'btn btn-success']) ?>
     </p>

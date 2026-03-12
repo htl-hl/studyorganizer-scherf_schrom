@@ -42,13 +42,14 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
         <div class="alert alert-success mb-3"><?= Html::encode($success) ?></div>
     <?php endif; ?>
 
-    <!-- ═══════════════════ FÄCHER CARD ═══════════════════ -->
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <a href="<?= $urlIndex ?>&showFachForm=1&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
                class="btn btn-primary btn-sm">+ Create Fächer</a>
             <div class="d-flex align-items-center gap-3">
-                <span class="text-muted">Admin</span>
+                <div class="admintext"
+                <span class="text-muted"></span>
+            </div>
                 <form method="post" action="<?= $urlLogout ?>" style="display:inline">
                     <input type="hidden" name="_csrf" value="<?= $csrf ?>">
                     <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
@@ -58,7 +59,6 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
 
         <div class="card-body">
 
-            <!-- Suche Fach -->
             <form method="get" action="index.php" class="mb-3">
                 <input type="hidden" name="r" value="admin/index">
                 <input type="hidden" name="sucheLehrer" value="<?= Html::encode($sucheLehrer) ?>">
@@ -67,7 +67,6 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                        class="form-control" placeholder="Fach suchen...">
             </form>
 
-            <!-- Create Fach Form -->
             <?php if ($showFachForm || Yii::$app->request->get('showFachForm')): ?>
                 <div class="card mb-3" style="border:1px solid #6366f1;">
                     <div class="card-body">
@@ -96,7 +95,6 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                     <?php foreach ($faecher as $fach): ?>
                         <tr>
                             <?php if ((int)$editFachId === (int)$fach['id']): ?>
-                                <!-- Inline Edit -->
                                 <td colspan="2">
                                     <form method="post" action="<?= $urlUpdateFach ?>"
                                           class="d-flex gap-2 align-items-center">
@@ -129,13 +127,15 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
         </div>
     </div>
 
-    <!-- ═══════════════════ LEHRER CARD ═══════════════════ -->
+
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <a href="<?= $urlIndex ?>&showLehrerForm=1&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
                class="btn btn-primary btn-sm">+ Create Lehrer</a>
             <div class="d-flex align-items-center gap-3">
-                <span class="text-muted">Admin</span>
+                <div class="admintext"
+                <span class="text-muted"></span>
+            </div>
                 <form method="post" action="<?= $urlLogout ?>" style="display:inline">
                     <input type="hidden" name="_csrf" value="<?= $csrf ?>">
                     <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
@@ -145,7 +145,7 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
 
         <div class="card-body">
 
-            <!-- Suche Lehrer -->
+
             <form method="get" action="index.php" class="mb-3">
                 <input type="hidden" name="r" value="admin/index">
                 <input type="hidden" name="sucheFach" value="<?= Html::encode($sucheFach) ?>">
@@ -154,7 +154,6 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                        class="form-control" placeholder="Lehrer suchen...">
             </form>
 
-            <!-- Create Lehrer Form -->
             <?php if ($showLehrerForm || Yii::$app->request->get('showLehrerForm')): ?>
                 <div class="card mb-3" style="border:1px solid #6366f1;">
                     <div class="card-body">
@@ -180,7 +179,7 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                 </div>
             <?php endif; ?>
 
-            <!-- Lehrer Tabelle -->
+
             <table class="admin-table">
                 <thead>
                 <tr>
@@ -199,7 +198,7 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                     <?php foreach ($lehrer as $l): ?>
                         <tr>
                             <?php if ((int)$editLehrerId === (int)$l['id']): ?>
-                                <!-- Inline Edit -->
+
                                 <td colspan="4">
                                     <form method="post" action="<?= $urlUpdateLehrer ?>"
                                           class="d-flex gap-2 align-items-center flex-wrap">

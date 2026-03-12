@@ -46,16 +46,16 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         echo Nav::widget([
                 'options' => ['class' => 'navbar-nav ms-auto'],
                 'items' => [
-                        ['label' => 'Home', 'url' => ['/site/index']],
-                        ['label' => 'About', 'url' => ['/site/about']],
-                        ['label' => 'Contact', 'url' => ['/site/contact']],
-                        ['label' => 'Hausaufgaben', 'url' => ['/homework/index']],
+                        ['label' => 'Home🏠', 'url' => ['/site/index']],
+                        ['label' => 'About🫂', 'url' => ['/site/about']],
+                        ['label' => 'Contact📬', 'url' => ['/site/contact']],
+                        ['label' => 'Hausaufgaben📖', 'url' => ['/homework/index']],
                         Yii::$app->user->isGuest
-                                ? ['label' => 'Login', 'url' => ['/site/index']]
+                                ? ['label' => 'Login✔️', 'url' => ['/site/index']]
                                 : '<li class="nav-item">'
                                 . Html::beginForm(['/site/logout'])
                                 . Html::submitButton(
-                                        'Logout (' . Yii::$app->user->identity->username . ')',
+                                        'Logout (' . Yii::$app->user->identity->username . ')✖️',
                                         ['class' => 'nav-link btn btn-link logout']
                                 )
                                 . Html::endForm()

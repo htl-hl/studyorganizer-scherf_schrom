@@ -2,20 +2,15 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Homework;
 use app\models\HomeworkSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * HomeworkController implements the CRUD actions for Homework model.
- */
 class HomeworkController extends Controller
 {
-    /**
-     * @inheritDoc
-     */
     public function behaviors()
     {
         return array_merge(
@@ -24,35 +19,25 @@ class HomeworkController extends Controller
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
-                        'delete' => ['POST'],
+                        'delete'       => ['POST'],
+                        'set-finished' => ['POST'],
                     ],
                 ],
             ]
         );
     }
 
-    /**
-     * Lists all Homework models.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
-        $searchModel = new HomeworkSearch();
+        $searchModel  = new HomeworkSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
+            'searchModel'  => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Displays a single Homework model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionView($id)
     {
         return $this->render('view', [
@@ -60,18 +45,18 @@ class HomeworkController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Homework model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
     public function actionCreate()
     {
         $model = new Homework();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->user_id     = Yii::$app->user->id;
+                $model->is_finished = 0;
+
+                if ($model->save()) {
+                    return $this->redirect(['index']);
+                }
             }
         } else {
             $model->loadDefaultValues();
@@ -82,19 +67,16 @@ class HomeworkController extends Controller
         ]);
     }
 
-    /**
-     * Updates an existing Homework model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->user_id = Yii::$app->user->id;
+
+            if ($model->save()) {
+                return $this->redirect(['index']);
+            }
         }
 
         return $this->render('update', [
@@ -102,33 +84,25 @@ class HomeworkController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Homework model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Homework model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Homework the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    public function actionSetFinished($id, $value)
+    {
+        $model              = $this->findModel($id);
+        $model->is_finished = (int)$value;
+        $model->save(false);
+        return $this->redirect(['index']);
+    }
+
     protected function findModel($id)
     {
         if (($model = Homework::findOne(['id' => $id])) !== null) {
             return $model;
         }
-
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 }

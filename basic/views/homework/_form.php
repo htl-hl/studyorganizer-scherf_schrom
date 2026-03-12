@@ -123,7 +123,7 @@ $subjects = ArrayHelper::map(Subject::find()->orderBy('name')->all(), 'id', 'nam
     )->label('Fach') ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true])->label('Aufgabe') ?>
-
+A
     <?= $form->field($model, 'description')->textarea(['rows' => 5])->label('Beschreibung') ?>
 
     <?= $form->field($model, 'due_date')->input('date')->label('Fälligkeitsdatum') ?>

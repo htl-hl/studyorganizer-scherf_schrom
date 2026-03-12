@@ -131,4 +131,12 @@ class HomeworkController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    public function actionSetFinished($id, $value)
+    {
+        $model = $this->findModel($id);
+        $model->is_finished = (int)$value;
+        $model->save(false);
+        return $this->redirect(['index']);
+    }
 }

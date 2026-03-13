@@ -8,6 +8,7 @@ use app\models\HomeworkSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl; // NEU
 
 class HomeworkController extends Controller
 {
@@ -16,8 +17,31 @@ class HomeworkController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                // ✅ NEU: Zugriffskontrolle
+                'access' => [
+                    'class' => AccessControl::class,
+                    'rules' => [
+                        [
+                            'allow' => true,
+                            'roles' => ['@'], // nur eingeloggte User
+                            'matchCallback' => function ($rule, $action) {
+                                $role = Yii::$app->user->identity->role ?? null;
+                                return in_array($role, ['student', 'teacher']);
+                            },
+                        ],
+                    ],
+                    'denyCallback' => function ($rule, $action) {
+                        // Nicht eingeloggt → Login-Seite
+                        if (Yii::$app->user->isGuest) {
+                            return Yii::$app->response->redirect(['/site/login']);
+                        }
+                        // Eingeloggt aber falsche Rolle → 403
+                        throw new \yii\web\ForbiddenHttpException('Du hast keinen Zugriff auf diese Seite.');
+                    },
+                ],
+
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete'       => ['POST'],
                         'set-finished' => ['POST'],

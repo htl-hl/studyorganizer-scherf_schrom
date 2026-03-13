@@ -10,6 +10,7 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\RegistrationForm;
 use app\models\ContactForm;
+use app\models\Homework;
 
 class SiteController extends Controller
 {
@@ -55,7 +56,6 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        // Bereits eingeloggt → je nach User weiterleiten
         if (!Yii::$app->user->isGuest) {
             if (Yii::$app->user->identity->username === 'admin') {
                 return $this->redirect(['/admin/index']);
@@ -65,7 +65,6 @@ class SiteController extends Controller
 
         $loginModel = new LoginForm();
         if ($loginModel->load(Yii::$app->request->post()) && $loginModel->login()) {
-            // Nach Login: admin → Admin-Seite, alle anderen → Home
             if (Yii::$app->user->identity->username === 'admin') {
                 return $this->redirect(['/admin/index']);
             }
@@ -88,7 +87,21 @@ class SiteController extends Controller
 
     public function actionHome()
     {
-        return $this->render('home');
+        $userId = Yii::$app->user->id;
+
+        // 🔍 DEBUG: user_id ausgeben um zu prüfen ob sie stimmt
+        // echo "Meine User-ID: " . $userId; exit;
+
+        // user_id Filter temporär entfernt zum Testen
+        $pendingHomework = Homework::find()
+            ->where(['is_finished' => 0])
+            ->orderBy(['due_date' => SORT_ASC])
+            ->all();
+
+        return $this->render('home', [
+            'pendingHomework' => $pendingHomework,
+            'userId' => $userId,
+        ]);
     }
 
     public function actionLogout()

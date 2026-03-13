@@ -10,7 +10,6 @@ use yii\widgets\Pjax;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = Yii::t('app', 'Hausaufgaben');
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <style>

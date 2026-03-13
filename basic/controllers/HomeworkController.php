@@ -8,7 +8,7 @@ use app\models\HomeworkSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl; // NEU
+use yii\filters\AccessControl;
 
 class HomeworkController extends Controller
 {
@@ -17,13 +17,12 @@ class HomeworkController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                // ✅ NEU: Zugriffskontrolle
                 'access' => [
                     'class' => AccessControl::class,
                     'rules' => [
                         [
                             'allow' => true,
-                            'roles' => ['@'], // nur eingeloggte User
+                            'roles' => ['@'],
                             'matchCallback' => function ($rule, $action) {
                                 $role = Yii::$app->user->identity->role ?? null;
                                 return in_array($role, ['student', 'teacher']);
@@ -31,15 +30,12 @@ class HomeworkController extends Controller
                         ],
                     ],
                     'denyCallback' => function ($rule, $action) {
-                        // Nicht eingeloggt → Login-Seite
                         if (Yii::$app->user->isGuest) {
                             return Yii::$app->response->redirect(['/site/login']);
                         }
-                        // Eingeloggt aber falsche Rolle → 403
                         throw new \yii\web\ForbiddenHttpException('Du hast keinen Zugriff auf diese Seite.');
                     },
                 ],
-
                 'verbs' => [
                     'class' => VerbFilter::class,
                     'actions' => [
@@ -55,6 +51,9 @@ class HomeworkController extends Controller
     {
         $searchModel  = new HomeworkSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
+
+        // Nur eigene Hausaufgaben anzeigen
+        $dataProvider->query->andWhere(['user_id' => Yii::$app->user->id]);
 
         return $this->render('index', [
             'searchModel'  => $searchModel,
@@ -124,7 +123,10 @@ class HomeworkController extends Controller
 
     protected function findModel($id)
     {
-        if (($model = Homework::findOne(['id' => $id])) !== null) {
+        // Nur eigene Hausaufgaben findbar machen
+        $model = Homework::findOne(['id' => $id, 'user_id' => Yii::$app->user->id]);
+
+        if ($model !== null) {
             return $model;
         }
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));

@@ -5,7 +5,6 @@ namespace app\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\RegistrationForm;
@@ -44,9 +43,7 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
-                'class' => 'yii\web\ErrorAction',
-            ],
+            'error' => ['class' => 'yii\web\ErrorAction'],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
@@ -87,20 +84,17 @@ class SiteController extends Controller
 
     public function actionHome()
     {
-        $userId = Yii::$app->user->id;
-
-        // 🔍 DEBUG: user_id ausgeben um zu prüfen ob sie stimmt
-        // echo "Meine User-ID: " . $userId; exit;
-
-        // user_id Filter temporär entfernt zum Testen
+        // Nur die eigenen ausstehenden Hausaufgaben laden
         $pendingHomework = Homework::find()
-            ->where(['is_finished' => 0])
+            ->where([
+                'user_id'     => Yii::$app->user->id,
+                'is_finished' => 0,
+            ])
             ->orderBy(['due_date' => SORT_ASC])
             ->all();
 
         return $this->render('home', [
             'pendingHomework' => $pendingHomework,
-            'userId' => $userId,
         ]);
     }
 
@@ -117,9 +111,7 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('contactFormSubmitted');
             return $this->refresh();
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+        return $this->render('contact', ['model' => $model]);
     }
 
     public function actionAbout()

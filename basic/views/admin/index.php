@@ -4,12 +4,16 @@
 /** @var array $faecher */
 /** @var array $lehrer */
 /** @var array $alleFaecher */
+/** @var array $users */
 /** @var string $sucheFach */
 /** @var string $sucheLehrer */
+/** @var string $sucheUser */
 /** @var int|null $editFachId */
 /** @var int|null $editLehrerId */
+/** @var int|null $editUserId */
 /** @var bool $showFachForm */
 /** @var bool $showLehrerForm */
+/** @var bool $showUserForm */
 /** @var string|null $error */
 /** @var string|null $success */
 
@@ -18,47 +22,56 @@ use yii\bootstrap5\Html;
 $this->title = 'Admin';
 $csrf = Yii::$app->request->csrfToken;
 
-$base            = 'index.php?r=';
-$urlIndex        = $base . 'admin%2Findex';
-$urlCreateFach   = $base . 'admin%2Fcreate-fach';
-$urlUpdateFach   = $base . 'admin%2Fupdate-fach';
-$urlDeleteFach   = $base . 'admin%2Fdelete-fach';
-$urlCreateLehrer = $base . 'admin%2Fcreate-lehrer';
-$urlUpdateLehrer = $base . 'admin%2Fupdate-lehrer';
-$urlToggleLehrer = $base . 'admin%2Ftoggle-lehrer';
-$urlLogout       = $base . 'site%2Flogout';
+$base               = 'index.php?r=';
+$urlIndex           = $base . 'admin%2Findex';
+$urlCreateFach      = $base . 'admin%2Fcreate-fach';
+$urlUpdateFach      = $base . 'admin%2Fupdate-fach';
+$urlDeleteFach      = $base . 'admin%2Fdelete-fach';
+$urlCreateLehrer    = $base . 'admin%2Fcreate-lehrer';
+$urlUpdateLehrer    = $base . 'admin%2Fupdate-lehrer';
+$urlToggleLehrer    = $base . 'admin%2Ftoggle-lehrer';
+$urlCreateUser      = $base . 'admin%2Fcreate-user';
+$urlUpdateUserRole  = $base . 'admin%2Fupdate-user-role';
+$urlDeleteUser      = $base . 'admin%2Fdelete-user';
+$urlLogout          = $base . 'site%2Flogout';
 
-// editFachId / editLehrerId can come from flash (after error) or from GET (user clicked edit)
 $editFachId   = $editFachId   ?? Yii::$app->request->get('editFachId');
 $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
+$editUserId   = $editUserId   ?? Yii::$app->request->get('editUserId');
+
+$roleBadge = [
+        'admin'   => 'badge-admin',
+        'teacher' => 'badge-teacher',
+        'student' => 'badge-student',
+];
+$roleLabel = [
+        'admin'   => '⚙️ Admin',
+        'teacher' => '🧑‍🏫 Teacher',
+        'student' => '🎒 Student',
+];
 ?>
 
 <div class="admin-page">
 
+
     <?php if (!empty($error)): ?>
         <div class="alert alert-danger mb-3"><?= Html::encode($error) ?></div>
     <?php endif; ?>
-    <?php if (!empty($success ?? null)): ?>
+    <?php if (!empty($success)): ?>
         <div class="alert alert-success mb-3"><?= Html::encode($success) ?></div>
     <?php endif; ?>
 
+    <!-- ── Fächer ── -->
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <a href="<?= $urlIndex ?>&showFachForm=1&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
                class="btn btn-primary btn-sm">+ Create Fächer</a>
-            <div class="d-flex align-items-center gap-3">
-                <div class="admintext"
-                <span class="text-muted"></span>
-            </div>
-                <form method="post" action="<?= $urlLogout ?>" style="display:inline">
-                    <input type="hidden" name="_csrf" value="<?= $csrf ?>">
-                    <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
-                </form>
-            </div>
+            <form method="post" action="<?= $urlLogout ?>" style="display:inline">
+                <input type="hidden" name="_csrf" value="<?= $csrf ?>">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+            </form>
         </div>
-
         <div class="card-body">
-
             <form method="get" action="index.php" class="mb-3">
                 <input type="hidden" name="r" value="admin/index">
                 <input type="hidden" name="sucheLehrer" value="<?= Html::encode($sucheLehrer) ?>">
@@ -77,40 +90,34 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                                 <input type="text" name="name" class="form-control" placeholder="Fachname" required autofocus>
                             </div>
                             <button type="submit" class="btn btn-primary btn-sm">Speichern</button>
-                            <a href="<?= $urlIndex ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
-                               class="btn btn-outline-secondary btn-sm">Abbrechen</a>
+                            <a href="<?= $urlIndex ?>" class="btn btn-outline-secondary btn-sm">Abbrechen</a>
                         </form>
                     </div>
                 </div>
             <?php endif; ?>
 
             <h5 class="mb-3">Fächer</h5>
-
             <table class="admin-table">
                 <?php if (empty($faecher)): ?>
-                    <tr>
-                        <td colspan="2" class="text-muted" style="padding:12px;">Keine Fächer gefunden.</td>
-                    </tr>
+                    <tr><td class="text-muted" style="padding:12px;">Keine Fächer gefunden.</td></tr>
                 <?php else: ?>
                     <?php foreach ($faecher as $fach): ?>
                         <tr>
                             <?php if ((int)$editFachId === (int)$fach['id']): ?>
                                 <td colspan="2">
-                                    <form method="post" action="<?= $urlUpdateFach ?>"
-                                          class="d-flex gap-2 align-items-center">
+                                    <form method="post" action="<?= $urlUpdateFach ?>" class="d-flex gap-2 align-items-center">
                                         <input type="hidden" name="_csrf" value="<?= $csrf ?>">
                                         <input type="hidden" name="id" value="<?= $fach['id'] ?>">
                                         <input type="text" name="name" value="<?= Html::encode($fach['name']) ?>"
                                                class="form-control form-control-sm" style="max-width:300px;" required autofocus>
                                         <button type="submit" class="btn btn-primary btn-sm">Speichern</button>
-                                        <a href="<?= $urlIndex ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
-                                           class="btn btn-outline-secondary btn-sm">Abbrechen</a>
+                                        <a href="<?= $urlIndex ?>" class="btn btn-outline-secondary btn-sm">Abbrechen</a>
                                     </form>
                                 </td>
                             <?php else: ?>
                                 <td><?= Html::encode($fach['name']) ?></td>
                                 <td class="action-btns">
-                                    <a href="<?= $urlIndex ?>&editFachId=<?= $fach['id'] ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
+                                    <a href="<?= $urlIndex ?>&editFachId=<?= $fach['id'] ?>&sucheFach=<?= urlencode($sucheFach) ?>"
                                        class="btn-icon btn-edit" title="Bearbeiten">✏️</a>
                                     <form method="post" action="<?= $urlDeleteFach ?>" style="display:inline"
                                           onsubmit="return confirm('Fach „<?= Html::encode(addslashes($fach['name'])) ?>" wirklich löschen?')">
@@ -127,25 +134,17 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
         </div>
     </div>
 
-
-    <div class="card">
+    <!-- ── Lehrer ── -->
+    <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <a href="<?= $urlIndex ?>&showLehrerForm=1&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
                class="btn btn-primary btn-sm">+ Create Lehrer</a>
-            <div class="d-flex align-items-center gap-3">
-                <div class="admintext"
-                <span class="text-muted"></span>
-            </div>
-                <form method="post" action="<?= $urlLogout ?>" style="display:inline">
-                    <input type="hidden" name="_csrf" value="<?= $csrf ?>">
-                    <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
-                </form>
-            </div>
+            <form method="post" action="<?= $urlLogout ?>" style="display:inline">
+                <input type="hidden" name="_csrf" value="<?= $csrf ?>">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+            </form>
         </div>
-
         <div class="card-body">
-
-
             <form method="get" action="index.php" class="mb-3">
                 <input type="hidden" name="r" value="admin/index">
                 <input type="hidden" name="sucheFach" value="<?= Html::encode($sucheFach) ?>">
@@ -172,36 +171,25 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary btn-sm">Speichern</button>
-                            <a href="<?= $urlIndex ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
-                               class="btn btn-outline-secondary btn-sm">Abbrechen</a>
+                            <a href="<?= $urlIndex ?>" class="btn btn-outline-secondary btn-sm">Abbrechen</a>
                         </form>
                     </div>
                 </div>
             <?php endif; ?>
 
-
             <table class="admin-table">
                 <thead>
-                <tr>
-                    <th>Lehrer</th>
-                    <th>Fach</th>
-                    <th>Status</th>
-                    <th>Bearbeiten</th>
-                </tr>
+                <tr><th>Lehrer</th><th>Fach</th><th>Status</th><th>Bearbeiten</th></tr>
                 </thead>
                 <tbody>
                 <?php if (empty($lehrer)): ?>
-                    <tr>
-                        <td colspan="4" class="text-muted" style="padding:12px;">Keine Lehrer gefunden.</td>
-                    </tr>
+                    <tr><td colspan="4" class="text-muted" style="padding:12px;">Keine Lehrer gefunden.</td></tr>
                 <?php else: ?>
                     <?php foreach ($lehrer as $l): ?>
                         <tr>
                             <?php if ((int)$editLehrerId === (int)$l['id']): ?>
-
                                 <td colspan="4">
-                                    <form method="post" action="<?= $urlUpdateLehrer ?>"
-                                          class="d-flex gap-2 align-items-center flex-wrap">
+                                    <form method="post" action="<?= $urlUpdateLehrer ?>" class="d-flex gap-2 align-items-center flex-wrap">
                                         <input type="hidden" name="_csrf" value="<?= $csrf ?>">
                                         <input type="hidden" name="id" value="<?= $l['id'] ?>">
                                         <input type="text" name="name" value="<?= Html::encode($l['name']) ?>"
@@ -209,26 +197,22 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                                         <select name="subject_id" class="form-control form-control-sm" style="max-width:160px;" required>
                                             <option value="">— Fach —</option>
                                             <?php foreach ($alleFaecher as $f): ?>
-                                                <option value="<?= $f['id'] ?>"
-                                                        <?= (int)$f['id'] === (int)$l['fach_id'] ? 'selected' : '' ?>>
+                                                <option value="<?= $f['id'] ?>" <?= (int)$f['id'] === (int)$l['fach_id'] ? 'selected' : '' ?>>
                                                     <?= Html::encode($f['name']) ?>
                                                 </option>
                                             <?php endforeach; ?>
                                         </select>
                                         <button type="submit" class="btn btn-primary btn-sm">Speichern</button>
-                                        <a href="<?= $urlIndex ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
-                                           class="btn btn-outline-secondary btn-sm">Abbrechen</a>
+                                        <a href="<?= $urlIndex ?>" class="btn btn-outline-secondary btn-sm">Abbrechen</a>
                                     </form>
                                 </td>
                             <?php else: ?>
                                 <td><?= Html::encode($l['name']) ?></td>
                                 <td><?= Html::encode($l['fach']) ?></td>
                                 <td>
-                                    <?php if ($l['aktiv']): ?>
-                                        <span class="badge-aktiv">✔ Aktiv</span>
-                                    <?php else: ?>
-                                        <span class="badge-inaktiv">✘ Inaktiv</span>
-                                    <?php endif; ?>
+                                    <?= $l['aktiv']
+                                            ? '<span class="badge-aktiv">✔ Aktiv</span>'
+                                            : '<span class="badge-inaktiv">✘ Inaktiv</span>' ?>
                                 </td>
                                 <td class="action-btns">
                                     <form method="post" action="<?= $urlToggleLehrer ?>" style="display:inline">
@@ -238,7 +222,7 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
                                             <?= $l['aktiv'] ? 'Inaktivieren' : 'Aktivieren' ?>
                                         </button>
                                     </form>
-                                    <a href="<?= $urlIndex ?>&editLehrerId=<?= $l['id'] ?>&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
+                                    <a href="<?= $urlIndex ?>&editLehrerId=<?= $l['id'] ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
                                        class="btn-icon btn-edit" title="Bearbeiten">✏️</a>
                                 </td>
                             <?php endif; ?>
@@ -249,5 +233,6 @@ $editLehrerId = $editLehrerId ?? Yii::$app->request->get('editLehrerId');
             </table>
         </div>
     </div>
+
 
 </div>

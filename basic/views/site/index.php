@@ -11,8 +11,6 @@ use yii\bootstrap5\Html;
 $this->title = 'Login';
 ?>
 <div class="site-login text-center">
-    <a href="/" style="position: absolute; top: 100px; left: 100px;">Zurück</a>
-
     <div class="row justify-content-center">
         <div class="col-lg-5">
             <div id="login-form-container">

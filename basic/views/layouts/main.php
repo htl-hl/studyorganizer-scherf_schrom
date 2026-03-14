@@ -70,7 +70,7 @@ $isAdmin = $userRole === 'admin';
             </li>';
 
         NavBar::begin([
-                'brandLabel' => $svgImg . '<span style="margin-left: 5px;">Study-Oranizer</span>',
+                'brandLabel' => $svgImg . '<span style="margin-left: 5px;">Study-Organizer</span>',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
         ]);

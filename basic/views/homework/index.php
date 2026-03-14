@@ -257,7 +257,7 @@ $this->title = Yii::t('app', 'Hausaufgaben');
 
         <!-- Top Bar: Create + Logout -->
         <div class="hw-top-bar">
-            <?= Html::a('+ Create Hausübung', ['create'], ['class' => 'btn-create-hw']) ?>
+            <?= Html::a('Hausübung erstellen', ['create'], ['class' => 'btn-create-hw']) ?>
             <?php if (!Yii::$app->user->isGuest): ?>
                 <?= Html::beginForm(['/site/logout']) ?>
                 <?= Html::submitButton('Logout', ['class' => 'btn-logout-hw']) ?>

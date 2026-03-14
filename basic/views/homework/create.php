@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /** @var app\models\Homework $model */
 
 $this->title = 'Hausübung erstellen';
-$this->params['breadcrumbs'][] = ['label' => 'Hausaufgaben', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <style>

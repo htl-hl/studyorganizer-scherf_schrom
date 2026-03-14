@@ -51,7 +51,6 @@ $isAdmin = $userRole === 'admin';
         }
 
         if ($isAdmin) {
-            $navItems[] = ['label' => 'Admin⚙️', 'url' => ['/admin/index']];
             $navItems[] = ['label' => 'User👥', 'url' => ['/admin/users']];
         }
 

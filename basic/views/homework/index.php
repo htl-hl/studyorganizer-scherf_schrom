@@ -114,7 +114,6 @@ $this->title = Yii::t('app', 'Hausaufgaben');
         background: #32324a;
     }
 
-    /* Date-based left border colors */
     .hw-row-none    { border-left: 3px solid transparent; }
     .hw-row-info    { border-left: 3px solid #4a9eff; }
     .hw-row-warning { border-left: 3px solid #f5c842; }
@@ -144,7 +143,6 @@ $this->title = Yii::t('app', 'Hausaufgaben');
         font-weight: 600;
     }
 
-    /* Toggle buttons for is_finished */
     .hw-toggle-wrap {
         display: flex;
         gap: 5px;
@@ -186,17 +184,7 @@ $this->title = Yii::t('app', 'Hausaufgaben');
         font-weight: 700;
         box-shadow: 0 0 0 2px currentColor;
     }
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(224, 85, 85, 0.15);
-    color: #e05555;
-    border: 1px solid rgba(224, 85, 85, 0.4);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    }
+
     .hw-status-done {
         display: inline-flex;
         align-items: center;
@@ -239,7 +227,6 @@ $this->title = Yii::t('app', 'Hausaufgaben');
         font-size: 0.95rem;
     }
 
-    /* Light mode overrides */
     body.light .hw-wrapper       { background: #ffffff; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
     body.light .hw-search input  { background: #f5f5f5; border-color: #ddd; color: #333; }
     body.light .hw-table-head    { color: #999; }
@@ -255,7 +242,6 @@ $this->title = Yii::t('app', 'Hausaufgaben');
 
     <div class="hw-wrapper">
 
-        <!-- Top Bar: Create + Logout -->
         <div class="hw-top-bar">
             <?= Html::a('Hausübung erstellen', ['create'], ['class' => 'btn-create-hw']) ?>
             <?php if (!Yii::$app->user->isGuest): ?>
@@ -265,13 +251,11 @@ $this->title = Yii::t('app', 'Hausaufgaben');
             <?php endif; ?>
         </div>
 
-        <!-- Search -->
         <div class="hw-search">
             <label>Suche</label>
             <input type="text" id="hwSearchInput" placeholder="Hausübung suchen..." oninput="filterRows()">
         </div>
 
-        <!-- Table Header -->
         <div class="hw-table-head">
             <span>Fach</span>
             <span>Aufgabe</span>
@@ -280,7 +264,6 @@ $this->title = Yii::t('app', 'Hausaufgaben');
             <span>Bearbeiten</span>
         </div>
 
-        <!-- Rows -->
         <div id="hwList">
             <?php
             $models   = $dataProvider->getModels();
@@ -295,27 +278,24 @@ $this->title = Yii::t('app', 'Hausaufgaben');
                     $subject = $model->subject ? Html::encode($model->subject->name) : 'Fach #' . $model->subject_id;
                     $dueDate = $model->due_date ? Yii::$app->formatter->asDate($model->due_date, 'dd.MM.yyyy') : '—';
 
-                    // Determine left-border color class
                     if ($isGuest) {
                         $urgencyClass = 'hw-row-guest';
                     } elseif ($isDone) {
                         $urgencyClass = 'hw-row-done';
                     } elseif ($model->due_date) {
                         $due      = new DateTime($model->due_date);
-                        $diffSecs = $now->getTimestamp() - $due->getTimestamp(); // positive = overdue
                         $daysLeft = ($due->getTimestamp() - $now->getTimestamp()) / 86400;
 
                         if ($daysLeft < 0) {
-                            // already overdue → danger
                             $urgencyClass = 'hw-row-danger';
                         } elseif ($daysLeft < 1) {
-                            $urgencyClass = 'hw-row-danger';   // < 24h
+                            $urgencyClass = 'hw-row-danger';
                         } elseif ($daysLeft < 7) {
-                            $urgencyClass = 'hw-row-warning';  // 1–7 days
+                            $urgencyClass = 'hw-row-warning';
                         } elseif ($daysLeft < 14) {
-                            $urgencyClass = 'hw-row-info';     // 7–14 days
+                            $urgencyClass = 'hw-row-info';
                         } else {
-                            $urgencyClass = 'hw-row-none';     // >= 2 weeks
+                            $urgencyClass = 'hw-row-none';
                         }
                     } else {
                         $urgencyClass = 'hw-row-none';
@@ -330,7 +310,7 @@ $this->title = Yii::t('app', 'Hausaufgaben');
                                 <span class="hw-status-guest">● Unbekannt</span>
                             <?php else: ?>
                                 <div class="hw-toggle-wrap">
-                                    <?= Html::a('✓ True',
+                                    <?= Html::a('✓ Erledigt',
                                             ['set-finished', 'id' => $model->id, 'value' => 1],
                                             [
                                                     'class' => 'hw-toggle-btn hw-toggle-true' . ($isDone ? ' active' : ''),
@@ -338,7 +318,7 @@ $this->title = Yii::t('app', 'Hausaufgaben');
                                                     'title' => 'Als erledigt markieren',
                                             ]
                                     ) ?>
-                                    <?= Html::a('✗ False',
+                                    <?= Html::a('✗ Nicht erledigt',
                                             ['set-finished', 'id' => $model->id, 'value' => 0],
                                             [
                                                     'class' => 'hw-toggle-btn hw-toggle-false' . (!$isDone ? ' active' : ''),
@@ -368,7 +348,7 @@ $this->title = Yii::t('app', 'Hausaufgaben');
                 <?php endforeach; endif; ?>
         </div>
 
-    </div><!-- /.hw-wrapper -->
+    </div>
 </div>
 
 <script>

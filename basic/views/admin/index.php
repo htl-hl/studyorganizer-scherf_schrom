@@ -52,7 +52,6 @@ $roleLabel = [
 ?>
 
 <style>
-    /* ── Design Tokens ── */
     :root {
         --h:            36px;
         --radius:       8px;
@@ -78,14 +77,28 @@ $roleLabel = [
         --badge-inaktiv-bg:  #f9fafb; --badge-inaktiv-fg:  #6b7280;
     }
 
+    body:not(.light) {
+        --border:       #2e3347;
+        --border-focus: #6366f1;
+
+        --c-text:       #e8eaf0;
+        --c-muted:      #9ca3af;
+        --c-surface:    #1a1e28;
+        --c-bg:         #13161d;
+
+        --badge-admin-bg:    rgba(185,28,28,0.15);    --badge-admin-fg:    #fca5a5;
+        --badge-teacher-bg:  rgba(29,78,216,0.15);    --badge-teacher-fg:  #93c5fd;
+        --badge-student-bg:  rgba(21,128,61,0.15);    --badge-student-fg:  #86efac;
+        --badge-aktiv-bg:    rgba(21,128,61,0.15);    --badge-aktiv-fg:    #86efac;
+        --badge-inaktiv-bg:  rgba(107,114,128,0.15);  --badge-inaktiv-fg:  #9ca3af;
+    }
+
     .admin-page { padding: 1.5rem; }
 
-    /* ── Card ── */
     .card        { background: var(--c-surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden; }
     .card-header { padding: .875rem 1.25rem; background: var(--c-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
     .card-body   { padding: 1.5rem; }
 
-    /* ── Unified Control System ── */
     .ctrl,
     input.ctrl,
     select.ctrl,
@@ -112,7 +125,6 @@ $roleLabel = [
         margin:          0;
     }
 
-    /* Input / Select */
     input.ctrl,
     select.ctrl {
         background:      var(--c-surface) !important;
@@ -138,7 +150,6 @@ $roleLabel = [
         background-color:    var(--c-surface) !important;
     }
 
-    /* Full-width search input */
     input.ctrl-full {
         box-sizing:    border-box;
         display:       block;
@@ -160,7 +171,6 @@ $roleLabel = [
         box-shadow:   var(--shadow-focus);
     }
 
-    /* Buttons */
     a.ctrl, button.ctrl {
         text-decoration: none;
         border:          1px solid transparent !important;
@@ -170,7 +180,7 @@ $roleLabel = [
     .btn-primary:hover   { background: var(--c-primary-h); border-color: var(--c-primary-h) !important; color: #fff; }
 
     .btn-outline         { background: transparent; color: var(--c-neutral); border-color: var(--border) !important; }
-    .btn-outline:hover   { background: #f3f4f6; color: var(--c-text); border-color: #9ca3af !important; }
+    .btn-outline:hover   { background: var(--c-bg); color: var(--c-text); border-color: #9ca3af !important; }
 
     .btn-outline-primary       { background: transparent; color: var(--c-primary); border-color: var(--c-primary) !important; }
     .btn-outline-primary:hover { background: var(--c-primary); color: #fff; }
@@ -178,7 +188,6 @@ $roleLabel = [
     .btn-danger          { background: var(--c-danger);  color: #fff; border-color: var(--c-danger) !important; }
     .btn-danger:hover    { background: var(--c-danger-h); border-color: var(--c-danger-h) !important; }
 
-    /* Icon-only buttons */
     .btn-icon {
         display:         inline-flex;
         align-items:     center;
@@ -195,31 +204,27 @@ $roleLabel = [
         padding:         0;
         box-sizing:      border-box;
     }
-    .btn-icon:hover             { background: #f3f4f6; border-color: #9ca3af; transform: translateY(-1px); }
+    .btn-icon:hover             { background: var(--c-bg); border-color: #9ca3af; transform: translateY(-1px); }
     .btn-icon.btn-icon-del      { border-color: #fca5a5; }
-    .btn-icon.btn-icon-del:hover { background: #fef2f2; border-color: var(--c-danger); }
+    .btn-icon.btn-icon-del:hover { background: rgba(239,68,68,0.12); border-color: var(--c-danger); }
 
-    /* ── Inline form row (edit rows) ── */
     .inline-form {
-        display:     flex;
+        display:        flex;
         flex-direction: row;
-        align-items: center;
-        gap:         .5rem;
-        flex-wrap:   wrap;
+        align-items:    center;
+        gap:            .5rem;
+        flex-wrap:      wrap;
     }
 
-    /* ── Search section ── */
     .search-section        { margin-bottom: 1.5rem; }
     .search-section label  { display: block; font-size: .8125rem; font-weight: 600; color: var(--c-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem; }
 
-    /* ── Create form card ── */
-    .create-card    { border: 1px solid var(--c-primary) !important; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; background: #fafafe; }
-    .create-card h6 { margin: 0 0 1rem; font-weight: 700; font-size: .9375rem; }
+    .create-card    { border: 1px solid var(--c-primary) !important; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; background: var(--c-bg); }
+    .create-card h6 { margin: 0 0 1rem; font-weight: 700; font-size: .9375rem; color: var(--c-text); }
     .create-row     { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
     .create-row .ctrl      { flex: 1 1 160px; min-width: 0; }
     .create-row select.ctrl { flex: 0 0 180px; }
 
-    /* ── Table ── */
     .admin-table       { width: 100%; border-collapse: collapse; }
     .admin-table thead th {
         padding:        .625rem 1rem;
@@ -231,17 +236,15 @@ $roleLabel = [
         border-bottom:  2px solid var(--border);
         background:     var(--c-bg);
     }
-    .admin-table tbody tr        { border-bottom: 1px solid #f3f4f6; transition: background .12s; }
-    .admin-table tbody tr:hover  { background: #fafafe; }
+    .admin-table tbody tr        { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .admin-table tbody tr:hover  { background: var(--c-bg); }
     .admin-table tbody tr:last-child { border-bottom: none; }
-    .admin-table tbody td        { padding: .75rem 1rem; font-size: var(--font-size); vertical-align: middle; }
-    .admin-table .edit-row       { background: #f8f7ff !important; }
+    .admin-table tbody td        { padding: .75rem 1rem; font-size: var(--font-size); vertical-align: middle; color: var(--c-text); }
+    .admin-table .edit-row       { background: var(--c-bg) !important; }
     .admin-table .edit-row td    { padding: .625rem 1rem; }
 
-    /* Action cell */
     .action-cell { display: flex; gap: .375rem; align-items: center; }
 
-    /* ── Badges ── */
     .role-badge, .badge-aktiv, .badge-inaktiv {
         display:       inline-flex;
         align-items:   center;
@@ -257,7 +260,6 @@ $roleLabel = [
     .badge-aktiv    { background: var(--badge-aktiv-bg);    color: var(--badge-aktiv-fg); }
     .badge-inaktiv  { background: var(--badge-inaktiv-bg);  color: var(--badge-inaktiv-fg); border: 1px solid var(--border); }
 
-    /* Section title */
     .section-title { font-size: 1rem; font-weight: 700; color: var(--c-text); margin: 0 0 1rem; }
 </style>
 
@@ -270,9 +272,6 @@ $roleLabel = [
         <div class="alert alert-success mb-3"><?= Html::encode($success) ?></div>
     <?php endif; ?>
 
-    <!-- ════════════════════════════════════
-         FÄCHER
-    ════════════════════════════════════ -->
     <div class="card mb-4">
         <div class="card-header">
             <a href="<?= $urlIndex ?>&showFachForm=1&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
@@ -285,7 +284,6 @@ $roleLabel = [
 
         <div class="card-body">
 
-            <!-- Search -->
             <div class="search-section">
                 <form method="get" action="index.php">
                     <input type="hidden" name="r"           value="admin/index">
@@ -296,7 +294,6 @@ $roleLabel = [
                 </form>
             </div>
 
-            <!-- Create form -->
             <?php if ($showFachForm || Yii::$app->request->get('showFachForm')): ?>
                 <div class="create-card">
                     <h6>📚 Neues Fach erstellen</h6>
@@ -357,9 +354,6 @@ $roleLabel = [
         </div>
     </div>
 
-    <!-- ════════════════════════════════════
-         LEHRER
-    ════════════════════════════════════ -->
     <div class="card mb-4">
         <div class="card-header">
             <a href="<?= $urlIndex ?>&showLehrerForm=1&sucheFach=<?= urlencode($sucheFach) ?>&sucheLehrer=<?= urlencode($sucheLehrer) ?>"
@@ -372,7 +366,6 @@ $roleLabel = [
 
         <div class="card-body">
 
-            <!-- Search -->
             <div class="search-section">
                 <form method="get" action="index.php">
                     <input type="hidden" name="r"         value="admin/index">
@@ -383,7 +376,6 @@ $roleLabel = [
                 </form>
             </div>
 
-            <!-- Create form -->
             <?php if ($showLehrerForm || Yii::$app->request->get('showLehrerForm')): ?>
                 <div class="create-card">
                     <h6>🧑‍🏫 Neuen Lehrer erstellen</h6>

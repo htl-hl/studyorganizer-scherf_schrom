@@ -27,20 +27,17 @@ $changePasswordId = $changePasswordId ?? Yii::$app->request->get('changePassword
 
 $roleBadge = ['admin' => 'badge-admin', 'teacher' => 'badge-teacher', 'student' => 'badge-student'];
 $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'student' => '🎒 Student'];
-
 ?>
 
 <style>
-    /* ── Design Tokens ── */
     :root {
-        --h:           36px;          /* uniform control height */
+        --h:           36px;
         --radius:      8px;
         --font-size:   0.875rem;
         --border:      #d1d5db;
         --border-focus:#6366f1;
         --shadow-focus:0 0 0 3px rgba(99,102,241,.18);
 
-        /* Colours */
         --c-primary:   #6366f1;
         --c-primary-h: #4f46e5;
         --c-danger:    #ef4444;
@@ -54,25 +51,31 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
         --c-surface:   #ffffff;
         --c-bg:        #f9fafb;
 
-        /* Badge colours */
         --badge-admin-bg:    #fef2f2; --badge-admin-fg:    #b91c1c;
         --badge-teacher-bg:  #eff6ff; --badge-teacher-fg:  #1d4ed8;
         --badge-student-bg:  #f0fdf4; --badge-student-fg:  #15803d;
     }
 
-    /* ── Base ── */
+    body:not(.light) {
+        --border:       #2e3347;
+        --border-focus: #6366f1;
+
+        --c-text:       #e8eaf0;
+        --c-muted:      #9ca3af;
+        --c-surface:    #1a1e28;
+        --c-bg:         #13161d;
+
+        --badge-admin-bg:    rgba(185,28,28,0.15);    --badge-admin-fg:    #fca5a5;
+        --badge-teacher-bg:  rgba(29,78,216,0.15);    --badge-teacher-fg:  #93c5fd;
+        --badge-student-bg:  rgba(21,128,61,0.15);    --badge-student-fg:  #86efac;
+    }
+
     .admin-page { padding: 1.5rem; }
 
-    /* ── Card ── */
-    .card          { background: var(--c-surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden; }
-    .card-header   { padding: .875rem 1.25rem; background: var(--c-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
-    .card-body     { padding: 1.5rem; }
+    .card        { background: var(--c-surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.06); overflow: hidden; }
+    .card-header { padding: .875rem 1.25rem; background: var(--c-bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: .75rem; }
+    .card-body   { padding: 1.5rem; }
 
-    /* ─────────────────────────────────────────
-       UNIFIED CONTROL SYSTEM
-       box-sizing: border-box ensures padding
-       never adds to the declared height.
-    ───────────────────────────────────────── */
     .ctrl,
     input.ctrl,
     select.ctrl,
@@ -97,36 +100,33 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
         margin:         0;
     }
 
-    /* Input / Select overrides */
     input.ctrl,
     select.ctrl {
-        background:     var(--c-surface) !important;
-        border:         1px solid var(--border) !important;
-        color:          var(--c-text) !important;
-        outline:        none !important;
-        justify-content:flex-start !important;
-        font-weight:    400 !important;
-        /* reset Bootstrap padding-top/bottom */
-        padding-top:    0 !important;
-        padding-bottom: 0 !important;
+        background:      var(--c-surface) !important;
+        border:          1px solid var(--border) !important;
+        color:           var(--c-text) !important;
+        outline:         none !important;
+        justify-content: flex-start !important;
+        font-weight:     400 !important;
+        padding-top:     0 !important;
+        padding-bottom:  0 !important;
     }
     input.ctrl::placeholder { color: #9ca3af; }
     input.ctrl:focus,
     select.ctrl:focus {
-        border-color:  var(--border-focus) !important;
-        box-shadow:    var(--shadow-focus) !important;
+        border-color: var(--border-focus) !important;
+        box-shadow:   var(--shadow-focus) !important;
     }
     select.ctrl {
-        padding-right:  2rem !important;
-        appearance:     none;
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236b7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
+        padding-right:       2rem !important;
+        appearance:          none;
+        -webkit-appearance:  none;
+        background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%236b7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+        background-repeat:   no-repeat;
         background-position: right .6rem center;
-        background-color: var(--c-surface) !important;
+        background-color:    var(--c-surface) !important;
     }
 
-    /* Wide search input */
     input.ctrl-full {
         box-sizing:    border-box;
         display:       block;
@@ -148,29 +148,27 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
         box-shadow:   var(--shadow-focus);
     }
 
-    /* Button variants */
     a.ctrl, button.ctrl {
         text-decoration: none;
         border: 1px solid transparent !important;
         justify-content: center !important;
     }
 
-    .btn-primary   { background: var(--c-primary);  color: #fff; border-color: var(--c-primary);  }
-    .btn-primary:hover { background: var(--c-primary-h); border-color: var(--c-primary-h); color: #fff; }
+    .btn-primary         { background: var(--c-primary);  color: #fff; border-color: var(--c-primary) !important; }
+    .btn-primary:hover   { background: var(--c-primary-h); border-color: var(--c-primary-h) !important; color: #fff; }
 
-    .btn-danger    { background: var(--c-danger);   color: #fff; border-color: var(--c-danger);   }
-    .btn-danger:hover  { background: var(--c-danger-h);  border-color: var(--c-danger-h);  color: #fff; }
+    .btn-danger          { background: var(--c-danger);   color: #fff; border-color: var(--c-danger) !important; }
+    .btn-danger:hover    { background: var(--c-danger-h);  border-color: var(--c-danger-h) !important; color: #fff; }
 
-    .btn-warning-outline { background: transparent; color: var(--c-warning); border-color: var(--c-warning); }
-    .btn-warning-outline:hover { background: var(--c-warning); color: #fff; }
+    .btn-warning-outline         { background: transparent; color: var(--c-warning); border-color: var(--c-warning) !important; }
+    .btn-warning-outline:hover   { background: var(--c-warning); color: #fff; }
 
-    .btn-outline   { background: transparent; color: var(--c-neutral); border-color: var(--border); }
-    .btn-outline:hover { background: #f3f4f6; color: var(--c-text); border-color: #9ca3af; }
+    .btn-outline         { background: transparent; color: var(--c-neutral); border-color: var(--border) !important; }
+    .btn-outline:hover   { background: var(--c-bg); color: var(--c-text); border-color: #9ca3af !important; }
 
-    .btn-outline-primary { background: transparent; color: var(--c-primary); border-color: var(--c-primary); }
-    .btn-outline-primary:hover { background: var(--c-primary); color: #fff; }
+    .btn-outline-primary         { background: transparent; color: var(--c-primary); border-color: var(--c-primary) !important; }
+    .btn-outline-primary:hover   { background: var(--c-primary); color: #fff; }
 
-    /* Icon-only action buttons */
     .btn-icon {
         display:         inline-flex;
         align-items:     center;
@@ -186,51 +184,45 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
         text-decoration: none;
         padding:         0;
     }
-    .btn-icon:hover          { background: #f3f4f6; border-color: #9ca3af; transform: translateY(-1px); }
-    .btn-icon.btn-icon-del   { border-color: #fca5a5; }
-    .btn-icon.btn-icon-del:hover { background: #fef2f2; border-color: var(--c-danger); }
-    .btn-icon.btn-icon-pw:hover  { background: #fffbeb; border-color: var(--c-warning); }
+    .btn-icon:hover              { background: var(--c-bg); border-color: #9ca3af; transform: translateY(-1px); }
+    .btn-icon.btn-icon-del       { border-color: #fca5a5; }
+    .btn-icon.btn-icon-del:hover { background: rgba(239,68,68,0.12); border-color: var(--c-danger); }
+    .btn-icon.btn-icon-pw:hover  { background: rgba(245,158,11,0.12); border-color: var(--c-warning); }
 
-    /* ── Search section ── */
     .search-section { margin-bottom: 1.5rem; }
     .search-section label { display: block; font-size: .8125rem; font-weight: 600; color: var(--c-muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem; }
 
-    /* ── Create-user card ── */
-    .create-card { border: 1px solid var(--c-primary); border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; background: #fafafe; }
-    .create-card h6 { margin: 0 0 1rem; font-weight: 700; font-size: .9375rem; }
-    .create-row { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
-    .create-row .ctrl { flex: 1 1 160px; min-width: 0; }
-    .create-row select.ctrl { flex: 0 0 160px; }
+    .create-card    { border: 1px solid var(--c-primary); border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem; background: var(--c-bg); }
+    .create-card h6 { margin: 0 0 1rem; font-weight: 700; font-size: .9375rem; color: var(--c-text); }
+    .create-row     { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+    .create-row .ctrl        { flex: 1 1 160px; min-width: 0; }
+    .create-row select.ctrl  { flex: 0 0 160px; }
     .create-row .ctrl-actions { display: flex; gap: .5rem; flex-shrink: 0; }
 
-    /* ── Table ── */
     .admin-table { width: 100%; border-collapse: collapse; }
     .admin-table thead th {
-        padding: .625rem 1rem;
-        font-size: .75rem;
-        font-weight: 700;
+        padding:        .625rem 1rem;
+        font-size:      .75rem;
+        font-weight:    700;
         text-transform: uppercase;
         letter-spacing: .06em;
-        color: var(--c-muted);
-        border-bottom: 2px solid var(--border);
-        background: var(--c-bg);
+        color:          var(--c-muted);
+        border-bottom:  2px solid var(--border);
+        background:     var(--c-bg);
     }
     .admin-table thead th:last-child { text-align: right; }
-    .admin-table tbody tr { border-bottom: 1px solid #f3f4f6; transition: background .12s; }
-    .admin-table tbody tr:hover { background: #fafafe; }
+    .admin-table tbody tr            { border-bottom: 1px solid var(--border); transition: background .12s; }
+    .admin-table tbody tr:hover      { background: var(--c-bg); }
     .admin-table tbody tr:last-child { border-bottom: none; }
-    .admin-table tbody td { padding: .75rem 1rem; font-size: var(--font-size); vertical-align: middle; }
+    .admin-table tbody td            { padding: .75rem 1rem; font-size: var(--font-size); vertical-align: middle; color: var(--c-text); }
     .admin-table tbody td:last-child { text-align: right; }
 
-    /* Edit / password row */
-    .edit-row { background: #f8f7ff !important; }
+    .edit-row    { background: var(--c-bg) !important; }
     .edit-row td { padding: .625rem 1rem; }
     .inline-form { display: flex; flex-direction: row; align-items: center; gap: .5rem; flex-wrap: wrap; }
 
-    /* Action cell */
     .action-cell { display: flex; gap: .375rem; justify-content: flex-end; align-items: center; }
 
-    /* ── Role badges ── */
     .role-badge {
         display:       inline-flex;
         align-items:   center;
@@ -249,7 +241,6 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
 <div class="admin-page">
     <div class="card">
 
-        <!-- Card Header -->
         <div class="card-header">
             <div style="display:flex;gap:.5rem;align-items:center;">
                 <a href="<?= $urlUsers ?>&showUserForm=1" class="ctrl btn-primary">+ Create User</a>
@@ -260,10 +251,8 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
             </form>
         </div>
 
-        <!-- Card Body -->
         <div class="card-body">
 
-            <!-- Search -->
             <div class="search-section">
                 <form method="get" action="index.php">
                     <input type="hidden" name="r" value="admin/users">
@@ -275,7 +264,6 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
                 </form>
             </div>
 
-            <!-- Create user form -->
             <?php if ($showUserForm || Yii::$app->request->get('showUserForm')): ?>
                 <div class="create-card">
                     <h6>👤 Neuen User erstellen</h6>
@@ -299,7 +287,6 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
                 </div>
             <?php endif; ?>
 
-            <!-- User table -->
             <table class="admin-table">
                 <thead>
                 <tr>
@@ -315,14 +302,13 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
                     <?php foreach ($users as $u): ?>
 
                         <?php if ((int)$editUserId === (int)$u['id']): ?>
-                            <!-- ── Role edit row ── -->
                             <tr class="edit-row">
                                 <td><strong><?= Html::encode($u['username']) ?></strong></td>
                                 <td colspan="2">
                                     <form method="post" action="<?= $urlUpdateUserRole ?>" class="inline-form">
-                                        <input type="hidden" name="_csrf"     value="<?= $csrf ?>">
-                                        <input type="hidden" name="id"        value="<?= $u['id'] ?>">
-                                        <input type="hidden" name="redirect"  value="users">
+                                        <input type="hidden" name="_csrf"    value="<?= $csrf ?>">
+                                        <input type="hidden" name="id"       value="<?= $u['id'] ?>">
+                                        <input type="hidden" name="redirect" value="users">
                                         <select name="role" class="ctrl" style="width:160px;" required>
                                             <option value="student" <?= $u['role']==='student'?'selected':'' ?>>🎒 Student</option>
                                             <option value="teacher" <?= $u['role']==='teacher'?'selected':'' ?>>🧑‍🏫 Teacher</option>
@@ -335,14 +321,13 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
                             </tr>
 
                         <?php elseif ((int)$changePasswordId === (int)$u['id']): ?>
-                            <!-- ── Password change row ── -->
                             <tr class="edit-row">
                                 <td><strong><?= Html::encode($u['username']) ?></strong></td>
                                 <td colspan="2">
                                     <form method="post" action="<?= $urlChangePassword ?>" class="inline-form">
-                                        <input type="hidden" name="_csrf"            value="<?= $csrf ?>">
-                                        <input type="hidden" name="id"               value="<?= $u['id'] ?>">
-                                        <input type="hidden" name="redirect"         value="users">
+                                        <input type="hidden" name="_csrf"           value="<?= $csrf ?>">
+                                        <input type="hidden" name="id"              value="<?= $u['id'] ?>">
+                                        <input type="hidden" name="redirect"        value="users">
                                         <input type="password" name="password"         class="ctrl" style="width:160px;" placeholder="Neues Passwort"      required autofocus>
                                         <input type="password" name="password_confirm" class="ctrl" style="width:160px;" placeholder="Passwort bestätigen" required>
                                         <button type="submit" class="ctrl btn-warning-outline">Speichern</button>
@@ -352,7 +337,6 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
                             </tr>
 
                         <?php else: ?>
-                            <!-- ── Normal row ── -->
                             <tr>
                                 <td><?= Html::encode($u['username']) ?></td>
                                 <td>
@@ -389,6 +373,6 @@ $roleLabel = ['admin' => '⚙️ Admin', 'teacher' => '🧑‍🏫 Teacher', 'st
                 </tbody>
             </table>
 
-        </div><!-- /card-body -->
-    </div><!-- /card -->
+        </div>
+    </div>
 </div>

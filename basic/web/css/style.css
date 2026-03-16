@@ -152,9 +152,13 @@ input.error {
     text-align: center;
     padding: 16px;
     font-size: 13px;
-    color: #6b7280 !important;
+    color: #9ca3af !important;
     border-top: 1px solid #252a37;
     background-color: #13161d !important;
+}
+
+#footer .text-muted {
+    color: #9ca3af !important;
 }
 
 #footer a {
@@ -237,7 +241,11 @@ body.light .btn-secondary:hover {
 body.light #footer {
     background-color: #ffffff !important;
     border-top: 1px solid #e5e7eb;
-    color: #9ca3af !important;
+    color: #6b7280 !important;
+}
+
+body.light #footer .text-muted {
+    color: #6b7280 !important;
 }
 
 body.light .toggle-btn {
@@ -250,6 +258,6 @@ body.light .toggle-btn:hover {
     background-color: #d1d5db;
 }
 
-.admintext  {
+.admintext {
     color: #ffffff;
 }
